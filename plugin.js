@@ -9,8 +9,8 @@ Napisz wtyczkę do jQuery. Wtyczka ma służyć do walidacji pól formularza. Wt
 Konkretnie już o wtyczce. Niech będą następujące metody:
 (3) Walidacja na podstawie wyrażenia regularnego +
 (3) Walidacja pola e-mail +
-(4) Walidacja złożoności hasła
-(5) Obsługa pola kodu pocztowego działająca w następujący sposób:
+(4) Walidacja złożoności hasła +
+(5) Obsługa pola kodu pocztowego działająca w następujący sposób: +
 Użytkownik wpisuje kod pocztowy
 W momencie gdy wpisany tekst będzie w formie 00-000 (gdzie 0 oznacza jakąś cyfrę), wtyczka zajmie się wypełnieniem pola zawierającego nazwę miejscowości
 Jeśli kod jest niepoprawny, wtyczka oznaczy pole za pomocą czerwonego obramowania.
@@ -29,17 +29,24 @@ Plugin działa poprawnie przy założeniu, że będzie jedno pole z hasłem oraz
 			password_bigLetter: 2, // ilość dużych liter w haśle
 			password_digit: 2, // ilość cyfr w haśle
 			password_specialCharacter: 2 // ilość znaków specjalnych [!,@,#,$,%,^,&,*,?,_,~] w haśle
-	
 		}, options);
 		
-		console.log(config)
-		var codeJSON;
+		var codeJSON, id;
 		
 		var functions = {
 			init: function( val ){
 				var el = $(val).find('input');
+				id = val;
+				
 				$(val).addClass('validateText');
-				console.log($(el).find('[data-type="password"]'))
+				$($(val).find('input[type="submit"]')).attr('disabled', true);
+				
+				$($(val).find('input[data-type="password"]')).after('<div id="password">' + 
+					'	<div class="box length"><i class="icon-ruler"></i></div>' + 
+					'	<div class="box letter"><i class="icon-sort-alphabet-outline"></i></div>' + 
+					'	<div class="box digit"><i class="icon-sort-numeric-outline"></i></div>' + 
+					'	<div class="box special"><i class="icon-hash"></i></div>' + 
+				'</div>');
 				
 				$.get('kody.json', function(result){
 					functions.getArray(result);
@@ -63,96 +70,113 @@ Plugin działa poprawnie przy założeniu, że będzie jedno pole z hasłem oraz
 							break;
 					}
 				});
-				
 			},
 			validText: function( val ) {
-				if( config.pattern.test($(val).val()) ){
-					functions.succes(val);
-				} else {
-					functions.error(val);
-				}
+				if( config.pattern.test($(val).val()) ) functions.succes(val);
+				else functions.error(val);
 			},
 			validEmail: function( val ) {
 				var regex = /^\w+@[a-zA-Z_]+?\.[a-zA-Z]{2,3}$/;
-				if( regex.test($(val).val()) ){
-					functions.succes(val);
-				} else {
-					functions.error(val);
-				}
+				if( regex.test($(val).val()) ) functions.succes(val);
+				else functions.error(val);
 			},
 			validPassword: function( val ) {
-				var password = $(val).val();
-				console.log(password)
-				var score = 0;
-				var bigLetter = /[A-Z]/g,
+				var password = $(val).val(),
+					valid = 0,
+					bigLetter = /[A-Z]/g,
 					digit = /[0-9]/g,
 					specialCharacter = /[!,@,#,$,%,^,&,*,?,_,~]/g;
 				
 				// Sprawdzanie długości hasla
 				if( password.length < config.password_minLength ){
 					functions.errorPass('#password', '.length');
+					valid--;
 				} else {
 					functions.succesPass('#password', '.length');
+					valid++;
 				}
 				
 				// Sprawdzanie wielkich liter
 				if( bigLetter.test(password) && password.match(bigLetter).length >= config.password_bigLetter ){
 					functions.succesPass('#password', '.letter');
+					valid++;
 				} else {
 					functions.errorPass('#password', '.letter');
+					valid--;
 				}
 				
 				// Sprawdzanie cyfr
 				if( password.match(digit) < config.password_digit ){
 					functions.errorPass('#password', '.digit');
+					valid--;
 				} else {
 					functions.succesPass('#password', '.digit');
+					valid++;
 				}
 				
 				// Sprawdzanie znaków specjalnych
-				if( specialCharacter.test(password) && password.match(specialCharacter).length >= config_password.specialCharacter ){
+				if( specialCharacter.test(password) && password.match(specialCharacter).length >= config.password_specialCharacter ){
 					functions.succesPass('#password', '.special');
+					valid++;
 				} else {
 					functions.errorPass('#password', '.special');
+					valid--;
 				}
 				
-				
+				if( valid == 4 ) functions.succes(val);
+				else functions.error(val);
 			},
 			validCode: function( val ) {
 				var regex = /^[0-9]{2}\-[0-9]{3}$/;
-				if( regex.test($(val).val()) ){ // jeżeli dobrze wpisane
-					var value = $(val).val();
-					var city = codeJSON[value];
+				if( regex.test($(val).val()) ){
+					var value = $(val).val(),
+						city = codeJSON[value];
 					
 					if( city ){
+						$('[data-type="city"]').val(city.toString());
 						functions.succes(val);
-						$('[data-type="city"]').val(city.toString()).attr('disabled',true);
 					} else {
-						functions.error(val);
 						$('[data-type="city"]').val('');
+						functions.error(val);
 					}
-				} else { //bląd
+				} else {
 					functions.error(val);
 				}
 			},
 			getArray: function( date ) {
 				codeJSON = date;
 			},
+			checkForm: function(){
+				var el = $(id).find('input');
+			
+				for( var i = 0, empty = 0; i < el.length; i++ ){
+					if( el[i].value == '' || $(el[i]).hasClass('error') ) empty++;
+				}
+				
+				if( empty ) $($(id).find('input[type="submit"]')).attr('disabled', true);
+				else $($(id).find('input[type="submit"]')).attr('disabled', false);
+			},
 			error: function( val ){
-				if($(val).hasClass('succes')) $(val).removeClass('succes');
+				if( $(val).hasClass('succes') ) $(val).removeClass('succes');
 				$(val).addClass('error');
+				
+				functions.checkForm();
 			},
 			errorPass: function( val, type ){
-				if($($(val).find(type)).hasClass('succes')) $($(val).find(type)).removeClass('succes');
+				if( $($(val).find(type)).hasClass('succes') ) $($(val).find(type)).removeClass('succes');
 				$($(val).find(type)).addClass('error');
+				
+				functions.checkForm();
 			},
 			succes: function( val ) {
-				if($(val).hasClass('error')) $(val).removeClass('error');
+				if( $(val).hasClass('error') ) $(val).removeClass('error');
 				$(val).addClass('succes');
+				functions.checkForm();
 			},
 			succesPass: function( val, type ) {
-				if($($(val).find(type)).hasClass('error')) $($(val).find(type)).removeClass('error');
+				if( $($(val).find(type)).hasClass('error') ) $($(val).find(type)).removeClass('error');
 				$($(val).find(type)).addClass('succes');
+				functions.checkForm();
 			}
 		};
 			

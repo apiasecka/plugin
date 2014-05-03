@@ -3,33 +3,31 @@
 <head>
 	<meta charset="UTF-8" />
 	<meta name="viewport" content="width=device-width, initial-scale=1" />
-	<title>PLUGIN BIU</title>
+	<title>PLUGIN TEST</title>
 	
 	<link rel="stylesheet" type="text/css" media="all" href="validateText.css" />
+	
 	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
 	<script src="plugin.js"></script>
-	
 </head>
 <body>
-
+<p><strong>Przykładowy formularz:</strong> </p>
 <form id="form">
-	imię: <input type="text" data-type="text"><br>
-	email: <input type="email" data-type="email"><br>
-	password: <input type="password" data-type="password"><br>
-	<div id="password">
-		<div class="box length"><i class="icon-ruler"></i></div>
-		<div class="box letter"><i class="icon-sort-alphabet-outline"></i></div>
-		<div class="box digit"><i class="icon-sort-numeric-outline"></i></div>
-		<div class="box special"><i class="icon-hash"></i></div>
-	</div>
-	kod pocztowy: <input type="text" data-type="code"><br>
-	miasto: <input type="text" data-type="city">
+	<p><label>imię: </label><input type="text" data-type="text"></p>
+	<p><label>email: </label><input type="email" data-type="email"></p>
+	<p><label>password: </label><input type="password" data-type="password"></p>
+	<p><label>kod pocztowy: </label><input type="text" data-type="code"></p>
+	<p><label>miasto: </label><input type="text" data-type="city" disabled></p>
+	<p><input type="submit" value="send"></p>
 </form>
 
 <div id="data"></div>
 
 <script>
-$('#form').validateText({pattern: /^[A-ZĄĆĘŁŃÓŚŹŻ][a-ząćęłóńśźż]*$/, password_digit: 1});
+$('#form').validateText({
+	pattern: /^[A-ZĄĆĘŁŃÓŚŹŻ][a-ząćęłóńśźż]*$/,
+	password_digit: 1
+});
 </script>
 
 </body>
