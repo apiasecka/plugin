@@ -1,0 +1,49 @@
+@font-face {
+  font-family: 'fontello';
+  src: url('font/fontello.eot?62986611');
+  src: url('font/fontello.eot?62986611#iefix') format('embedded-opentype'),
+       url('font/fontello.woff?62986611') format('woff'),
+       url('font/fontello.ttf?62986611') format('truetype'),
+       url('font/fontello.svg?62986611#fontello') format('svg');
+  font-weight: normal;
+  font-style: normal;
+}
+
+.validateText .box {display: inline-block; padding: 3px 5px;}
+.validateText .error {border: #FF1630 1px inset; background-color: #FF968E; padding: 2px; color: #4A060E;}
+.validateText .succes {border: green 1px inset; background-color: #B4FFA2; padding: 2px; color: #134A08;}
+
+[class^="icon-"]:before, [class*=" icon-"]:before {
+	font-family: "fontello";
+	font-style: normal;
+	font-weight: normal;
+	speak: none;
+	
+	display: inline-block;
+	text-decoration: inherit;
+	width: 1em;
+	margin-right: .2em;
+	text-align: center;
+	/* opacity: .8; */
+	
+	/* For safety - reset parent styles, that can break glyph codes*/
+	font-variant: normal;
+	text-transform: none;
+	
+	/* fix buttons height, for twitter bootstrap */
+	line-height: 1em;
+	
+	
+	/* you can be more comfortable with increased icons size */
+	/* font-size: 120%; */
+	
+	/* Uncomment for 3D effect */
+	/* text-shadow: 1px 1px 1px rgba(127, 127, 127, 0.3); */
+}
+
+.validateText .icon-sort-alphabet-outline:before { content: '\e801'; }
+.validateText .icon-sort-numeric-outline:before { content: '\e803'; }
+.validateText .icon-ruler:before { content: '\e800'; }
+.validateText .icon-hash:before { content: '\e802'; }
+.validateText .icon-block:before { content: '\e804'; }
+.validateText .icon-ok:before { content: '\e805'; }
