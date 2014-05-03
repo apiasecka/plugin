@@ -150,7 +150,7 @@ Plugin działa poprawnie przy założeniu, że będzie jedno pole z hasłem oraz
 				var el = $(id).find('input');
 			
 				for( var i = 0, empty = 0; i < el.length; i++ ){
-					if( el[i].value == '' || $(el[i]).hasClass('error') ) empty++;
+					if( el[i].value === '' || $(el[i]).hasClass('error') ) empty++;
 				}
 				
 				if( empty ) $($(id).find('input[type="submit"]')).attr('disabled', true);
